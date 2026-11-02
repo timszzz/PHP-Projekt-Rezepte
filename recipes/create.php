@@ -1,3 +1,15 @@
+<?php
+require_once __DIR__ . '/../src/Db.php';
+
+$db = new Db();
+
+$stmt = $db->query(
+    'SELECT id, name FROM main_category ORDER BY name'
+);
+
+$categories = $stmt->fetchAll();
+?>
+
 
 <!DOCTYPE html>
 <html lang="de">
@@ -6,34 +18,79 @@
     <title>Rezept erstellen</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-        }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 500px;
-        }
+   body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6f8;
+      color: #253043;
+      margin: 0;
+      padding: 40px 20px;
+   }
 
-        label {
-            font-weight: bold;
-        }
+   h1 {
+      font-size: 28px;
+      margin-top: 0;
+      margin-bottom: 25px;
+      text-align: center;
+   }
 
-        input, textarea, select {
-            padding: 10px;
-            font-size: 16px;
-            width: 100%;
-            box-sizing: border-box;
-        }
+   form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
 
-        button {
-            padding: 12px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+      max-width: 500px;
+      margin: 0 auto;
+
+      background-color: white;
+      padding: 30px;
+      border: 1px solid #e2e5ea;
+      border-radius: 12px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+   }
+
+   label {
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 8px;
+   }
+
+   input, textarea, select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 11px 12px;
+      border: 1px solid #cbd2dc;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 15px;
+      background-color: white;
+   }
+
+   input:focus, textarea:focus, select:focus {
+      outline: 2px solid #8aa8d6;
+      border-color: #507bb8;
+   }
+
+   textarea {
+      resize: vertical;
+   }
+
+   button {
+      margin-top: 15px;
+      padding: 13px;
+      background-color: #345c83;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+   }
+
+   button:hover {
+      background-color: #284967;
+   }
+
     </style>
 </head>
 <body>
@@ -82,11 +139,23 @@
             name="category_id"
             required
          >
-            <option value="">Kategorie auswählen</option>
+         <option value="">Kategorie auswählen</option>
+            <!--<option value="">Kategorie auswählen</option>
             <option value="1">Hauptgericht</option>
             <option value="2">Dessert</option>
             <option value="3">Frühstück</option>
-            <option value="4">Getränke</option>
+            <option value="4">Getränke</option>-->
+
+      <!-- Die Kategorien werden aus der Datenbank geladen.
+      Das value-Attribut enthält die Kategorie-ID.
+      htmlspecialchars() sorgt für eine sichere HTML-Ausgabe
+      des Kategorienamens. -->
+         <?php foreach ($categories as $category): ?>
+            <option value="<?= (int)$category['id'] ?>">
+               <?= htmlspecialchars($category['name'], ENT_QUOTES, 'UTF-8') ?>
+            </option>
+         <?php endforeach; ?>
+
          </select>
 
         <button type="submit">

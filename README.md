@@ -4,8 +4,8 @@
 
 ### Pflicht-Features
 
-- [ ] Rezepte anzeigen (für alle Besucher, ohne Login)
-- [ ] Rezepte suchen
+- [x] Rezepte anzeigen (für alle Besucher, ohne Login)
+- [x] Rezepte suchen
 - [ ] Rezepte anlegen
 - [ ] Rezepte ändern
 - [ ] Rezepte löschen
@@ -48,17 +48,17 @@ Die Docker-Umgebung bringt Webserver (nginx), PHP 8.4, MariaDB und phpMyAdmin mi
 3. Dieses Repository in das Webverzeichnis der Docker-Umgebung klonen:
 
    ```bash
-   # TODO: Zielordner prüfen und hier eintragen
+   cd docker-for-students/php
    git clone https://github.com/<USER>/PHP-Projekt-Rezepte.git
    ```
 
 4. Datenbank einrichten: phpMyAdmin unter http://localhost:8081 öffnen, eine Datenbank `rezepte` anlegen und den Dump importieren.
 
    ```
-   TODO: Pfad zum Dump eintragen, z. B. database/dump.sql
+   TODO: Pfad zum Dump eintragen, z. B. database/dump.sql (fehlt nämlich noch)
    ```
 
-5. Die Anwendung im Browser aufrufen: http://localhost:8080 (TODO: genauen Pfad ergänzen)
+5. Die Anwendung im Browser aufrufen: http://localhost:8080/php/PHP-Projekt-Rezepte/
 
 ### Datenbankverbindung
 
@@ -70,12 +70,12 @@ Innerhalb der Docker-Umgebung gelten diese Zugangsdaten:
 | Port        | `3306` |
 | Benutzer    | `root` |
 | Passwort    | (leer) |
-| Datenbank   | `rezepte` (TODO: endgültigen Namen festlegen) |
+| Datenbank   | `rezepte` |
 
 ### Test-Login
 
 ```
-TODO: Zugangsdaten eines Testbenutzers aus dem Dump eintragen
+admin / test123
 ```
 
 ## Technik
@@ -114,6 +114,23 @@ Diese Maßnahmen aus der Vorlesung setzen wir um:
 - Jede schreibende Aktion prüft serverseitig, ob der Benutzer angemeldet ist.
 - Nach dem Login wird die Session-ID mit `session_regenerate_id(true)` erneuert.
 - Formulare für Anlegen, Ändern und Löschen sind mit einem CSRF-Token abgesichert.
+
+## Suche und Rezeptanzeige (Tims Part (Teilbereich 2))
+
+Rezepte können ohne Login angesehen und gesucht werden.
+
+- `index.php` zeigt alle Rezepte alphabetisch mit Kategorie. Über das Suchformular lässt sich ein Begriff in Titel und Zutaten suchen, Groß- und Kleinschreibung spielen dabei keine Rolle.
+- `recipe.php` zeigt Titel, Kategorie, Zutaten und Zubereitung eines Rezepts. Bei einer ungültigen oder unbekannten ID erscheint „Rezept nicht gefunden“ mit dem Statuscode 404.
+
+| Datei | Aufgabe |
+|---|---|
+| `src/RecipeRepository.php` | `findAll()`, `findById()`, `search()` |
+| `src/CategoryRepository.php` | `findAll()` für die Kategorien |
+| `src/helpers.php` | `e()` für die sichere Ausgabe |
+
+Die Rezept-ID muss eine Ganzzahl sein. Der Suchbegriff wird bereinigt und nur per Prepared Statement an die Datenbank übergeben.
+
+Zum Testen im Browser aufrufen: `tests/test_helpers.php`, `tests/test_recipes.php` und `tests/test_search.php`.
 
 ## Erklärung zur Verwendung generativer KI
 

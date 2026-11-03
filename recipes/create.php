@@ -1,4 +1,10 @@
 <?php
+
+// Session für einmalige Erfolgsmeldungen starten
+if (session_status() === PHP_SESSION_NONE) {
+   session_start();
+}
+
 // create.php hat zwei Aufgaben:
 // Bei einer GET-Anfrage wird das Formular angezeigt.
 // Bei einer POST-Anfrage werden die eingegebenen Formulardaten verarbeitet
@@ -17,9 +23,11 @@ $categories = $stmt->fetchAll();
 // Fehlermeldungen sammeln
 $errors = [];
 
-// Erfolgsmeldung nach erfolgreichem Speichern anzeigen
-$success = ($_SERVER['REQUEST_METHOD'] === 'GET')
-   && (($_GET['success'] ?? '') === '1');
+// Einmalige Erfolgsmeldung aus der Session lesen
+$success = $_SESSION['recipe_success'] ?? '';
+
+// Meldung nach dem Lesen löschen
+unset($_SESSION['recipe_success']);
 
 // Formularwerte initialisieren
 $title = '';
@@ -100,9 +108,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          'category_id' => $categoryId
       ]);
 
-      // ERS-BE: Nach dem Speichern zur GET-Seite weiterleiten
-      // Verhindert ein erneutes INSERT beim Aktualisieren der Seite
-      header('Location: create.php?success=1', true, 303);
+      // ERS-BE: Erfolgsmeldung für die nächste Anfrage speichern
+      $_SESSION['recipe_success'] = 'Das Rezept wurde erfolgreich gespeichert.';
+
+      // Nach erfolgreichem INSERT zur GET-Seite weiterleiten (PRG)
+      header('Location: create.php', true, 303);
       exit;
    }
 }
@@ -125,14 +135,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    <?php if (!empty($errors)): ?>
       <div class="error-box">
          <?php foreach ($errors as $error): ?>
-            <p><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
+            <p><?= e($error) ?></p>
          <?php endforeach; ?>
       </div>
    <?php endif; ?>
 
-   <?php if ($success): ?>
+   <?php if ($success !== ''): ?>
       <div class="success-box">
-         <p>Das Rezept wurde erfolgreich gespeichert.</p>
+         <p><?= e($success) ?></p>
       </div>
    <?php endif; ?>
 
@@ -148,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          id="title"
          name="title"
          maxlength="150"
-         value="<?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8') ?>"
+         value="<?= e($title) ?>"
          required>
 
       <label for="ingredients">Zutaten:</label>
@@ -156,14 +166,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          id="ingredients"
          name="ingredients"
          rows="5"
-         required><?= htmlspecialchars($ingredients, ENT_QUOTES, 'UTF-8') ?></textarea>
+         required><?= e($ingredients) ?></textarea>
 
       <label for="preparation">Zubereitung:</label>
       <textarea
          id="preparation"
          name="preparation"
          rows="7"
-         required><?= htmlspecialchars($preparation, ENT_QUOTES, 'UTF-8') ?></textarea>
+         required><?= e($preparation) ?></textarea>
 
       <label for="category_id">Kategorie:</label>
 
@@ -172,15 +182,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          name="category_id"
          required>
          <option value="">Kategorie auswählen</option>
-         <!-- Die Kategorien werden aus der Datenbank geladen.
-      Das value-Attribut enthält die Kategorie-ID.
-      htmlspecialchars() sorgt für eine sichere HTML-Ausgabe
-      des Kategorienamens. -->
+         <!-- Die Kategorien werden dynamisch aus der Datenbank geladen.
+            Die Hilfsfunktion e() sorgt für eine sichere HTML-Ausgabe
+            der Kategorienamen. -->
          <?php foreach ($categories as $category): ?>
             <option
                value="<?= (int)$category['id'] ?>"
                <?= (string)$category['id'] === (string)$categoryId ? 'selected' : '' ?>>
-               <?= htmlspecialchars($category['name'], ENT_QUOTES, 'UTF-8') ?>
+               <?= e($category['name']) ?>
             </option>
          <?php endforeach; ?>
 

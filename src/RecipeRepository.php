@@ -34,27 +34,19 @@ class RecipeRepository
         return $stmt->fetch() ?: null;
     }
 
-    // Sucht in Titel und Zutaten, optional auf eine Kategorie eingeschränkt
-    public function search(string $term, ?int $categoryId = null): array
+    // Sucht den Begriff in Titel und Zutaten
+    public function search(string $term): array
     {
         $sql = 'SELECT r.id, r.title, c.name AS category
                 FROM main_recipe r
                 JOIN main_category c ON r.category_id = c.id
-                WHERE (r.title LIKE :title OR r.ingredients LIKE :ingredients)';
+                WHERE r.title LIKE :title OR r.ingredients LIKE :ingredients
+                ORDER BY r.title';
 
         $pattern = '%' . $term . '%';
-        $params = ['title' => $pattern, 'ingredients' => $pattern];
-
-        // Kategorie-Filter nur ergänzen, wenn eine gewählt wurde
-        if ($categoryId !== null) {
-            $sql .= ' AND r.category_id = :category';
-            $params['category'] = $categoryId;
-        }
-
-        $sql .= ' ORDER BY r.title';
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
+        $stmt->execute(['title' => $pattern, 'ingredients' => $pattern]);
 
         return $stmt->fetchAll();
     }

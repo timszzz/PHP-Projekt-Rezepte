@@ -15,14 +15,10 @@ if ($term === '') {
 } else {
     $recipes = $repo->search($term);
 }
+
+$pageTitle = 'Rezepte';
+require __DIR__ . '/templates/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Rezepte</title>
-</head>
-<body>
     <h1>Rezepte</h1>
 
     <form method="get" action="index.php">
@@ -43,5 +39,4 @@ if ($term === '') {
     <?php else: ?>
         <p>Keine Rezepte gefunden.</p>
     <?php endif; ?>
-</body>
-</html>
+<?php require __DIR__ . '/templates/footer.php'; ?>

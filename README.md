@@ -48,17 +48,17 @@ Die Docker-Umgebung bringt Webserver (nginx), PHP 8.4, MariaDB und phpMyAdmin mi
 3. Dieses Repository in das Webverzeichnis der Docker-Umgebung klonen:
 
    ```bash
-   # TODO: Zielordner prüfen und hier eintragen
+   cd docker-for-students/php
    git clone https://github.com/<USER>/PHP-Projekt-Rezepte.git
    ```
 
 4. Datenbank einrichten: phpMyAdmin unter http://localhost:8081 öffnen, eine Datenbank `rezepte` anlegen und den Dump importieren.
 
    ```
-   TODO: Pfad zum Dump eintragen, z. B. database/dump.sql
+   TODO: Pfad zum Dump eintragen, z. B. database/dump.sql (fehlt nämlich noch)
    ```
 
-5. Die Anwendung im Browser aufrufen: http://localhost:8080 (TODO: genauen Pfad ergänzen)
+5. Die Anwendung im Browser aufrufen: http://localhost:8080/php/PHP-Projekt-Rezepte/
 
 ### Datenbankverbindung
 
@@ -70,12 +70,12 @@ Innerhalb der Docker-Umgebung gelten diese Zugangsdaten:
 | Port        | `3306` |
 | Benutzer    | `root` |
 | Passwort    | (leer) |
-| Datenbank   | `rezepte` (TODO: endgültigen Namen festlegen) |
+| Datenbank   | `rezepte` |
 
 ### Test-Login
 
 ```
-TODO: Zugangsdaten eines Testbenutzers aus dem Dump eintragen
+admin / test123
 ```
 
 ## Technik

@@ -115,6 +115,78 @@ Diese Maßnahmen aus der Vorlesung setzen wir um:
 - Nach dem Login wird die Session-ID mit `session_regenerate_id(true)` erneuert.
 - Formulare für Anlegen, Ändern und Löschen sind mit einem CSRF-Token abgesichert.
 
+## Rezept-Erstellung (Xenias Part (Teilbereich 1))
+
+### Ziel
+Mit der Rezept-Erstellung können neue Rezepte über ein Webformular angelegt und in der MariaDB-Datenbank gespeichert werden.
+Nach der Integration der Authentifizierung soll diese Funktion ausschließlich angemeldeten Benutzern zur Verfügung stehen.
+
+### Implementierung
+Die Rezept-Erstellung befindet sich in `recipes/create.php` und verarbeitet GET- und POST-Anfragen.
+
+- **GET:** Das Formular zur Erstellung eines neuen Rezepts wird angezeigt.
+- **POST:** Die eingegebenen Formulardaten werden serverseitig validiert und bei gültigen Eingaben gespeichert.
+
+Die Datenbankoperation erfolgt über die Methode `RecipeRepository::create()`. Dabei wird ein Prepared Statement verwendet, um die Daten sicher in die Tabelle `main_recipe` einzufügen.
+
+Die verfügbaren Kategorien werden mit `CategoryRepository::findAll()` dynamisch aus der Datenbank geladen.
+
+### Formular und Validierung (ERS-FE, ERS-VAL)
+
+Das Formular enthält die Felder Titel, Zutaten, Zubereitung und Kategorie.
+
+Vor dem Speichern werden folgende Prüfungen durchgeführt:
+
+- Alle Pflichtfelder müssen ausgefüllt sein.
+- Der Titel darf maximal 150 Zeichen enthalten.
+- Die Kategorie muss in der Datenbank existieren.
+- Die übermittelten Formulardaten müssen die erwarteten Datentypen besitzen.
+
+Ungültige Eingaben werden mit verständlichen Fehlermeldungen abgelehnt. Bereits eingegebene Werte bleiben erhalten.
+
+Zur sicheren HTML-Ausgabe wird die Hilfsfunktion `e()` verwendet.
+
+### Erfolgsmeldung und Post/Redirect/Get
+
+Nach erfolgreichem Speichern wird eine einmalige Erfolgsmeldung mithilfe einer PHP-Session angezeigt.
+
+Das Post/Redirect/Get-Prinzip mit HTTP-Statuscode 303 verhindert eine erneute Speicherung des Rezepts beim Aktualisieren der Seite.
+
+### Zugriffskontrolle (ERS-SEC)
+
+Die Zugriffskontrolle ist noch nicht implementiert, da sie vom Authentifizierungsmodul (Teilbereich 4) abhängt.
+
+Nach der Integration sollen ausschließlich angemeldete Benutzer Rezepte erstellen können. Außerdem soll die Benutzer-ID dem erstellten Rezept zugeordnet werden.
+
+### Tests (ERS-TST)
+
+Die Rezept-Erstellung wird mit gültigen und ungültigen Eingaben getestet.
+
+Die Testfälle umfassen:
+
+- Erfolgreiches Erstellen und Speichern eines Rezepts
+- Fehlende Pflichtfelder
+- Überschreitung der maximalen Titellänge
+- Ungültige Kategorie-ID
+- Prüfung auf doppelte Speicherung beim Aktualisieren
+- Zugriff ohne Login (nach Integration der Authentifizierung)
+
+Die Testfälle und ihre Ergebnisse sind in `tests/TESTPLAN_ERS.md` dokumentiert.
+
+### Zugehörige Dateien
+
+| Datei | Aufgabe |
+|---|---|
+| `recipes/create.php` | Formular, Validierung und Verarbeitung |
+| `recipes/css/create.css` | Gestaltung des Formulars |
+| `src/RecipeRepository.php` | Methode `create()` zum Speichern |
+| `src/CategoryRepository.php` | Laden der Kategorien |
+| `src/helpers.php` | Sichere HTML-Ausgabe über `e()` |
+| `templates/header.php` | Gemeinsamer Header |
+| `templates/footer.php` | Gemeinsamer Footer |
+| `tests/TESTPLAN_ERS.md` | Dokumentation der Testfälle |
+
+
 ## Suche und Rezeptanzeige (Tims Part (Teilbereich 2))
 
 Rezepte können ohne Login angesehen und gesucht werden.

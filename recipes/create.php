@@ -1,8 +1,4 @@
 <?php
-// create.php hat zwei Aufgaben:
-// Bei einer GET-Anfrage wird das Formular angezeigt.
-// Bei einer POST-Anfrage werden die eingegebenen Formulardaten verarbeitet
-
 require_once __DIR__ . '/../src/Db.php';
 require_once __DIR__ . '/../src/helpers.php';
 require_once __DIR__ . '/../src/RecipeRepository.php';
@@ -143,7 +139,7 @@ require_once __DIR__ . '/../templates/header.php';
    <!-- Der Browser sendet den POST-Request an die aktuelle Seite (create.php). -->
    <form method="POST">
 
-      <label for="title">Titel:</label>
+   <label for="title">Titel:</label>
 
       <!-- Das name-Attribut legt fest, unter welchem Namen der Wert im HTTP-Request übertragen wird.
      Beispiel: name="title" → Zugriff in PHP über $_POST['title']. -->
@@ -151,9 +147,10 @@ require_once __DIR__ . '/../templates/header.php';
          type="text"
          id="title"
          name="title"
-         maxlength="150"
-         value="<?= e($title) ?>"
-         required>
+         maxlngth="150"
+         value="<?= e($title)?>"
+         required
+      >
 
       <label for="ingredients">Zutaten:</label>
       <textarea

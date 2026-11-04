@@ -147,7 +147,7 @@ require_once __DIR__ . '/../templates/header.php';
          type="text"
          id="title"
          name="title"
-         maxlngth="150"
+         maxlength="150"
          value="<?= e($title)?>"
          required
       >

@@ -1,24 +1,28 @@
 <?php
-
-// Session für einmalige Erfolgsmeldungen starten
-if (session_status() === PHP_SESSION_NONE) {
-   session_start();
-}
-
 // create.php hat zwei Aufgaben:
 // Bei einer GET-Anfrage wird das Formular angezeigt.
 // Bei einer POST-Anfrage werden die eingegebenen Formulardaten verarbeitet
 
 require_once __DIR__ . '/../src/Db.php';
 require_once __DIR__ . '/../src/helpers.php';
+require_once __DIR__ . '/../src/RecipeRepository.php';
+require_once __DIR__ . '/../src/CategoryRepository.php';
 
 $db = new Db();
 
-$stmt = $db->query(
-   'SELECT id, name FROM main_category ORDER BY name'
-);
+// Repository für Datenbankoperationen mit Rezepten
+$recipeRepo = new RecipeRepository($db);
 
-$categories = $stmt->fetchAll();
+// Repository für Kategorien
+$categoryRepo = new CategoryRepository($db);
+
+// Session für einmalige Erfolgsmeldungen starten
+if (session_status() === PHP_SESSION_NONE) {
+   session_start();
+}
+
+// Kategorien über das CategoryRepository laden
+$categories = $categoryRepo->findAll();
 
 // Fehlermeldungen sammeln
 $errors = [];
@@ -45,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    $preparationInput = $_POST['preparation'] ?? '';
    $categoryInput = $_POST['category_id'] ?? '';
 
-   // ERS-VAL: Datentypen prüfen
+   // Datentypen prüfen
    if (
       !is_string($titleInput) ||
       !is_string($ingredientsInput) ||
@@ -61,24 +65,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $preparation = trim($preparationInput);
       $categoryId = $categoryInput;
 
-      // ERS-VAL: Titel prüfen
+      // Titel prüfen
       if ($title === '') {
          $errors[] = 'Bitte geben Sie einen Titel ein.';
       } elseif (mb_strlen($title, 'UTF-8') > 150) {
          $errors[] = 'Der Titel darf maximal 150 Zeichen lang sein.';
       }
 
-      // ERS-VAL: Zutaten prüfen
+      // Zutaten prüfen
       if ($ingredients === '') {
          $errors[] = 'Bitte geben Sie die Zutaten ein.';
       }
 
-      // ERS-VAL: Zubereitung prüfen
+      // Zubereitung prüfen
       if ($preparation === '') {
          $errors[] = 'Bitte beschreiben Sie die Zubereitung.';
       }
 
-      // ERS-VAL: Prüfen, ob die gewählte Kategorie in der Datenbank existiert
+      // Prüfen, ob die gewählte Kategorie in der Datenbank existiert
       $validCategoryIds = array_map(
          'strval',
          array_column($categories, 'id')
@@ -90,46 +94,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          $errors[] = 'Die ausgewählte Kategorie ist ungültig.';
       }
    }
-   // ERS-DB: Rezept nur speichern, wenn keine Validierungsfehler vorliegen
+   // Rezept nur speichern, wenn keine Validierungsfehler vorliegen
    if (empty($errors)) {
-      // SQL INSERT folgt hier
-      $sql = 'INSERT INTO main_recipe
-               (title, ingredients, preparation, category_id)
-               VALUES
-               (:title, :ingredients, :preparation, :category_id)';
+         // Datenbankoperation über das RecipeRepository ausführen -> create()
+         $recipeRepo->create(
+            $title,
+            $ingredients,
+            $preparation,
+            (int)$categoryId
+         );
 
-      $stmt = $db->prepare($sql);
+         // Erfolgsmeldung für die nächste Anfrage speichern
+         $_SESSION['recipe_success'] = 'Das Rezept wurde erfolgreich gespeichert.';
 
-      // SQL-Abfrage mit den Formulardaten ausführen
-      $stmt->execute([
-         'title' => $title,
-         'ingredients' => $ingredients,
-         'preparation' => $preparation,
-         'category_id' => $categoryId
-      ]);
-
-      // ERS-BE: Erfolgsmeldung für die nächste Anfrage speichern
-      $_SESSION['recipe_success'] = 'Das Rezept wurde erfolgreich gespeichert.';
-
-      // Nach erfolgreichem INSERT zur GET-Seite weiterleiten (PRG)
-      header('Location: create.php', true, 303);
-      exit;
+         // Nach erfolgreichem INSERT zur GET-Seite weiterleiten (PRG)
+         header('Location: create.php', true, 303);
+         exit;
    }
 }
+
+// Seitentitel für das gemeinsame Layout festlegen
+$pageTitle = 'Rezept erstellen';
+
+// Eigenes Stylesheet für das Rezeptformular
+$extraCss = '/php/PHP-Projekt-Rezepte/recipes/css/create.css';
+
+// Gemeinsamen Header einbinden
+require_once __DIR__ . '/../templates/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="de">
-
-<head>
-   <meta charset="UTF-8">
-   <title>Rezept erstellen</title>
-   <link rel="stylesheet" href="css/create.css">
-</head>
-
-<body>
-
-   <h1>Neues Rezept erstellen</h1>
+<h1>Neues Rezept erstellen</h1>
 
    <!-- Fehlermeldungen anzeigen, falls die Validierung fehlschlägt -->
    <?php if (!empty($errors)): ?>
@@ -201,6 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
    </form>
 
-</body>
-
-</html>
+<?php
+// Gemeinsamen Footer einbinden
+require_once __DIR__ . '/../templates/footer.php';
+?>

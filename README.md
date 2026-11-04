@@ -184,7 +184,7 @@ Die Testfälle und ihre Ergebnisse sind in `tests/TESTPLAN_ERS.md` dokumentiert.
 | `src/helpers.php` | Sichere HTML-Ausgabe über `e()` |
 | `templates/header.php` | Gemeinsamer Header |
 | `templates/footer.php` | Gemeinsamer Footer |
-| `tests/TESTPLAN_ERS.md` | Dokumentation der Testfälle |
+| `tests/tests/TESTPLAN_ERS.md` | Dokumentation der Testfälle |
 
 
 ## Suche und Rezeptanzeige (Tims Part (Teilbereich 2))

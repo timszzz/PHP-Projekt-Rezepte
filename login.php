@@ -14,6 +14,10 @@ if (isLoggedIn()) {
 $errors = [];
 $username = '';
 
+// Hinweis von requireLogin() lesen und gleich löschen, damit er nur einmal erscheint
+$notice = $_SESSION['login_notice'] ?? '';
+unset($_SESSION['login_notice']);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usernameInput = $_POST['username'] ?? '';
     $passwordInput = $_POST['password'] ?? '';
@@ -41,6 +45,10 @@ $pageTitle = 'Anmelden';
 require __DIR__ . '/templates/header.php';
 ?>
     <h1>Anmelden</h1>
+
+    <?php if ($notice !== ''): ?>
+        <p><?= e($notice) ?></p>
+    <?php endif; ?>
 
     <?php foreach ($errors as $error): ?>
         <p role="alert"><?= e($error) ?></p>

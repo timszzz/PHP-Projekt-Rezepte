@@ -136,14 +136,17 @@ Zum Testen im Browser aufrufen: `tests/test_helpers.php`, `tests/test_recipes.ph
 
 Rezepte ansehen und suchen geht ohne Login. Anlegen, Ändern und Löschen sind nur nach der Anmeldung erlaubt.
 
-- `login.php` zeigt das Formular und prüft die Anmeldedaten. Nach dem Erfolg geht es zurück zur Startseite.
+- `login.php` zeigt das Formular und prüft die Anmeldedaten. Nach dem Erfolg geht es zurück zur Startseite. Wer von einer geschützten Seite umgeleitet wurde, sieht den Hinweis „Bitte melde dich an“.
 - `logout.php` beendet die Session und nimmt nur POST-Anfragen an.
-- Die Navigation in `templates/header.php` zeigt je nach Status „Anmelden“ oder den Benutzernamen und „Abmelden“.
+- `users.php` ist die Benutzerverwaltung: Angemeldete Benutzer sehen alle Benutzer und können neue anlegen.
+- Die Navigation in `templates/header.php` zeigt je nach Status „Anmelden“ oder „Benutzer“, den Benutzernamen und „Abmelden“.
 
 | Datei | Aufgabe |
 |---|---|
-| `src/UserRepository.php` | `findByUsername()`, `create()` |
-| `src/auth.php` | Session, Validierung, Passwortprüfung, `requireLogin()` |
+| `src/UserRepository.php` | `findByUsername()`, `findAll()`, `create()` |
+| `src/auth.php` | Session, Validierung, Passwortprüfung, `requireLogin()`, CSRF-Token |
+
+Für neue Benutzer gilt: Benutzername 3 bis 50 Zeichen aus Buchstaben, Ziffern, `.`, `_` und `-`, Passwort 8 bis 72 Zeichen und zweimal gleich eingegeben. Doppelte Benutzernamen werden abgelehnt.
 
 ### Seite schützen
 
@@ -161,6 +164,7 @@ requireLogin();
 - Nach dem Login wird die Session-ID mit `session_regenerate_id(true)` erneuert (Schutz vor Session Fixation).
 - Das Session-Cookie ist `HttpOnly` und `SameSite=Lax`, unter HTTPS zusätzlich `Secure`.
 - Die Session speichert nur Benutzer-ID und Namen, nie den Passwort-Hash.
+- Das Formular in `users.php` ist mit einem CSRF-Token abgesichert (`csrfToken()` und `checkCsrfToken()` in `src/auth.php`).
 
 Zum Testen im Browser aufrufen: `tests/test_auth.php` und `tests/test_protected.php`.
 

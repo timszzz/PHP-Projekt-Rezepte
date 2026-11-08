@@ -47,6 +47,57 @@ function validateLoginInput(mixed $username, mixed $password): array
     return $errors;
 }
 
+// Prüft die Daten für einen neuen Benutzer und liefert eine Liste mit Fehlermeldungen
+function validateNewUser(mixed $username, mixed $password, mixed $passwordRepeat): array
+{
+    if (!is_string($username) || !is_string($password) || !is_string($passwordRepeat)) {
+        return ['Die Formulardaten sind ungültig.'];
+    }
+
+    $errors = [];
+
+    // Nur Buchstaben, Ziffern, Punkt, Unterstrich und Bindestrich, 3 bis 50 Zeichen
+    if (!preg_match('/^[A-Za-z0-9._-]{3,50}$/', $username)) {
+        $errors[] = 'Der Benutzername muss 3 bis 50 Zeichen lang sein und darf nur Buchstaben, Ziffern, Punkt, Unterstrich und Bindestrich enthalten.';
+    }
+
+    if (mb_strlen($password, 'UTF-8') < 8) {
+        $errors[] = 'Das Passwort muss mindestens 8 Zeichen lang sein.';
+    } elseif (strlen($password) > 72) {
+        // password_hash() mit bcrypt berücksichtigt nur die ersten 72 Bytes
+        $errors[] = 'Das Passwort darf höchstens 72 Zeichen lang sein.';
+    }
+
+    if ($password !== $passwordRepeat) {
+        $errors[] = 'Die beiden Passwörter stimmen nicht überein.';
+    }
+
+    return $errors;
+}
+
+// Liefert ein CSRF-Token für Formulare, pro Session einmal erzeugt
+// Das Token kennt nur unsere eigene Seite, eine fremde Seite kann es nicht mitschicken
+function csrfToken(): string
+{
+    startSession();
+
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['csrf_token'];
+}
+
+// Prüft das mitgeschickte Token, hash_equals() vergleicht in konstanter Zeit
+function checkCsrfToken(mixed $token): bool
+{
+    startSession();
+
+    return is_string($token)
+        && isset($_SESSION['csrf_token'])
+        && hash_equals($_SESSION['csrf_token'], $token);
+}
+
 // Liefert den Benutzer, wenn Name und Passwort stimmen, sonst null
 function checkCredentials(UserRepository $users, string $username, string $password): ?array
 {
@@ -111,6 +162,8 @@ function currentUsername(): ?string
 function requireLogin(): void
 {
     if (!isLoggedIn()) {
+        // Einmalige Meldung für die Login-Seite, sie wird dort nach dem Anzeigen gelöscht
+        $_SESSION['login_notice'] = 'Bitte melde dich an, um diese Seite zu nutzen.';
         header('Location: ' . BASE_URL . '/login.php', true, 303);
         exit;
     }

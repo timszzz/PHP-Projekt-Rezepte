@@ -26,6 +26,16 @@ check('Falsches Passwort wird abgelehnt', checkCredentials($users, 'admin', 'fal
 check('Unbekannter Benutzer wird abgelehnt', checkCredentials($users, 'gibtsnicht', 'test123') === null);
 check('SQL Injection findet keinen Benutzer', $users->findByUsername("' OR 1=1 -- ") === null);
 
+// Validierung für neue Benutzer
+check('Gültiger neuer Benutzer ergibt keinen Fehler', validateNewUser('gleb', 'geheim123', 'geheim123') === []);
+check('Zu kurzer Benutzername wird abgelehnt', count(validateNewUser('ab', 'geheim123', 'geheim123')) === 1);
+check('Leerzeichen und HTML im Namen werden abgelehnt', count(validateNewUser('<b>x</b> y', 'geheim123', 'geheim123')) === 1);
+check('Zu kurzes Passwort wird abgelehnt', count(validateNewUser('gleb', 'kurz', 'kurz')) === 1);
+check('Zu langes Passwort wird abgelehnt', count(validateNewUser('gleb', str_repeat('a', 73), str_repeat('a', 73))) === 1);
+check('Unterschiedliche Passwörter werden abgelehnt', count(validateNewUser('gleb', 'geheim123', 'geheim124')) === 1);
+check('Array statt String wird abgelehnt', count(validateNewUser(['gleb'], 'geheim123', 'geheim123')) === 1);
+check('Benutzerliste enthält keinen Passwort-Hash', !array_key_exists('password_hash', $users->findAll()[0]));
+
 // Neuen Benutzer anlegen und am Ende wieder entfernen, damit die Testdaten gleich bleiben
 $testName = 'testuser_' . bin2hex(random_bytes(4));
 $password = 'geheim123';

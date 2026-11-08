@@ -22,6 +22,16 @@ class UserRepository
         return $stmt->fetch() ?: null;
     }
 
+    // Liefert alle Benutzer ohne Passwort-Hash, alphabetisch nach Namen
+    public function findAll(): array
+    {
+        $sql = 'SELECT id, username, created_at
+                FROM main_user
+                ORDER BY username';
+
+        return $this->db->query($sql)->fetchAll();
+    }
+
     // Legt einen Benutzer an und liefert seine neue ID
     // Erwartet das Ergebnis von password_hash(), nie das Passwort im Klartext
     public function create(string $username, string $passwordHash): int

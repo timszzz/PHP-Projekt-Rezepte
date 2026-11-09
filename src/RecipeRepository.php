@@ -51,4 +51,26 @@ class RecipeRepository
         return $stmt->fetchAll();
     }
 
+    // Speichert ein neues Rezept in der DB
+   public function create(
+      string $title,
+      string $ingredients,
+      string $preparation,
+      int $categoryId,
+   ): bool
+   {
+      $sql = 'INSERT INTO main_recipe
+      (title, ingredients, preparation, category_id)
+      VALUES
+      (:title, :ingredients, :preparation, :category_id)';
+
+   $stmt = $this->db->prepare($sql);
+
+   return $stmt->execute([
+      'title' => $title,
+      'ingredients' => $ingredients,
+      'preparation' => $preparation,
+      'category_id' => $categoryId
+   ]);
+   }
 }

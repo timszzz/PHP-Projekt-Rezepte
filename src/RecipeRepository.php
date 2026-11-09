@@ -57,12 +57,13 @@ class RecipeRepository
       string $ingredients,
       string $preparation,
       int $categoryId,
+      int $userId
    ): bool
    {
       $sql = 'INSERT INTO main_recipe
-      (title, ingredients, preparation, category_id)
+      (title, ingredients, preparation, category_id, user_id)
       VALUES
-      (:title, :ingredients, :preparation, :category_id)';
+      (:title, :ingredients, :preparation, :category_id, :user_id)';
 
    $stmt = $this->db->prepare($sql);
 
@@ -70,7 +71,8 @@ class RecipeRepository
       'title' => $title,
       'ingredients' => $ingredients,
       'preparation' => $preparation,
-      'category_id' => $categoryId
+      'category_id' => $categoryId,
+      'user_id' => $userId
    ]);
    }
 }

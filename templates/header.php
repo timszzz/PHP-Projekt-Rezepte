@@ -7,12 +7,20 @@ require_once __DIR__ . '/../src/auth.php';
 <head>
     <meta charset="UTF-8">
     <title><?= e($pageTitle ?? 'Rezepte') ?></title>
-    <link rel="stylesheet" href="assets/style.css">
+
+    <!-- Gemeinsames Stylesheet für alle Seiten -->
+    <!--<link rel="stylesheet" href="/php/PHP-Projekt-Rezepte/assets/style.css">-->
+
+    <!-- Optionales zusätzliches Stylesheet für einzelne Seiten -->
+    <?php if (!empty($extraCss)): ?>
+        <link rel="stylesheet" href="<?= e($extraCss) ?>">
+    <?php endif; ?>
 </head>
 <body>
     <nav>
         <a href="<?= BASE_URL ?>/index.php">Rezepte</a>
         <?php if (isLoggedIn()): ?>
+            <a href="<?= BASE_URL ?>/recipes/create.php">Rezept erstellen</a>
             <a href="<?= BASE_URL ?>/users.php">Benutzer</a>
             <span>Angemeldet als <?= e(currentUsername()) ?></span>
             <!-- Formular statt Link: Abmelden ändert etwas und läuft deshalb per POST -->

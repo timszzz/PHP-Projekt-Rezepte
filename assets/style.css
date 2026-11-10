@@ -1,0 +1,298 @@
+/* Gemeinsames Stylesheet für alle Seiten
+   Gestaltet nur die vorhandenen HTML-Elemente: Anordnung, Schrift, Buttons, Textfelder.
+   Angelehnt an Apples Gestaltungsrichtlinien: Systemschrift, 17 px Fließtext,
+   Bedienelemente mindestens 44 px hoch, Kontrast mindestens 4,5:1. */
+
+/* ---------- Grundlagen ---------- */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 16px 48px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: #1D1D1F;              /* 15:1 auf dem Hintergrund */
+    background-color: #F2F2F5;
+}
+
+h1 {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 24px 0 16px;
+}
+
+h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 28px 0 8px;
+}
+
+a {
+    color: #2D6A45;              /* 5,8:1 auf dem Hintergrund */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #D9D9DF;
+    margin: 32px 0 0;
+}
+
+/* Sichtbarer Rahmen bei Bedienung mit der Tastatur */
+:focus-visible {
+    outline: 3px solid #2D6A45;
+    outline-offset: 2px;
+}
+
+/* ---------- Navigation ---------- */
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid #D9D9DF;
+}
+
+nav a {
+    color: #1D1D1F;
+    padding: 10px 0;
+}
+
+/* Erster Link "Rezepte" als Name der Seite links, der Rest rechts */
+nav a:first-child {
+    margin-right: auto;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+nav span {
+    color: #5E5E66;              /* 5,8:1 */
+    font-size: 14px;
+}
+
+/* Abmelden-Formular sieht aus wie ein Link */
+nav button {
+    min-height: 44px;
+    padding: 0;
+    background: none;
+    color: #2D6A45;
+    font-weight: 400;
+}
+
+nav button:hover {
+    background: none;
+    text-decoration: underline;
+}
+
+/* ---------- Textfelder ---------- */
+input[type="text"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+    width: 100%;
+    max-width: 420px;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid #C7C7CF;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    color: #1D1D1F;
+    font: inherit;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #2D6A45;
+}
+
+textarea {
+    resize: vertical;
+}
+
+label {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* ---------- Eingabeformulare als Karte ----------
+   Anmelden, Benutzer anlegen, Rezept erstellen und Rezept bearbeiten.
+   Ausgenommen sind die kleinen Formulare für Abmelden und Löschen.
+   (Früher in recipes/css/create.css) */
+form[method="post" i]:not([action$="logout.php"]):not([action$="delete.php"]) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    background-color: #FFFFFF;
+    border-radius: 14px;
+}
+
+form[method="post" i]:not([action$="logout.php"]):not([action$="delete.php"]) p {
+    margin: 0;
+}
+
+form[method="post" i]:not([action$="logout.php"]):not([action$="delete.php"]) :is(input, textarea, select) {
+    max-width: none;
+}
+
+/* Anmelden, Benutzer, Bearbeiten: Feld steht nach einem Zeilenumbruch unter der Beschriftung */
+br + :is(input, textarea, select) {
+    margin-top: 6px;
+}
+
+/* Rezept erstellen: Beschriftung und Feld stehen direkt im Formular.
+   Feld rückt näher an seine Beschriftung, Abstand zum nächsten Feld bleibt größer. */
+form[method="post" i] > label {
+    margin-top: 8px;
+}
+
+form[method="post" i] > label + :is(input, textarea, select) {
+    margin-top: -6px;
+}
+
+/* Button nicht über die ganze Breite, sondern links ausgerichtet */
+form[method="post" i]:not([action$="logout.php"]):not([action$="delete.php"]) button {
+    align-self: flex-start;
+    margin-top: 8px;
+}
+
+/* "Abbrechen" beim Bearbeiten */
+form[method="post" i] > a {
+    align-self: flex-start;
+    padding: 10px 0;
+}
+
+/* ---------- Buttons ---------- */
+button {
+    min-height: 44px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 999px;
+    background-color: #2D6A45;   /* weiße Schrift darauf: 6,4:1 */
+    color: #FFFFFF;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #245638;
+}
+
+/* Löschen ist keine Hauptaktion und bekommt deshalb nur eine rote Schrift */
+form[action$="delete.php"] button {
+    background-color: #FDECEA;
+    color: #B42318;              /* 5,8:1 auf dem hellen Rot */
+}
+
+form[action$="delete.php"] button:hover {
+    background-color: #FAD7D3;
+}
+
+/* "Rezept bearbeiten" ist ein Link, sieht aber aus wie ein Button */
+a[href*="edit.php"] {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background-color: #E6F0E9;
+    color: #2D6A45;              /* 5,5:1 auf dem hellen Grün */
+    font-weight: 600;
+}
+
+a[href*="edit.php"]:hover {
+    background-color: #D5E6DA;
+    text-decoration: none;
+}
+
+/* Bearbeiten und Löschen nebeneinander */
+p:has(> a[href*="edit.php"]),
+form[action$="delete.php"] {
+    display: inline-block;
+    margin: 0 8px 0 0;
+}
+
+/* ---------- Suche auf der Startseite: alles in einer Zeile ---------- */
+form[method="get"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: 24px;
+}
+
+form[method="get"] input {
+    flex: 1;
+    min-width: 200px;
+    max-width: none;
+}
+
+/* ---------- Listen (Rezepte, Benutzer) ---------- */
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-color: #FFFFFF;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+li {
+    padding: 14px 18px;
+    color: #5E5E66;              /* Kategorie in Klammern, 6,4:1 auf Weiß */
+}
+
+li + li {
+    border-top: 1px solid #E5E5EA;
+}
+
+li a {
+    font-weight: 600;
+}
+
+/* ---------- Rezeptseite: Zutaten und Zubereitung als Karte ----------
+   Gilt für Absätze direkt nach einer Zwischenüberschrift,
+   aber nicht für Meldungen und nicht für den Absatz mit "Rezept bearbeiten". */
+h2 + p:not([role="alert"]):not(:has(a)) {
+    padding: 16px 20px;
+    background-color: #FFFFFF;
+    border-radius: 14px;
+    line-height: 1.7;
+}
+
+/* ---------- Meldungen ---------- */
+p[role="alert"],
+.error-box {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background-color: #FDECEA;
+    color: #B42318;              /* 5,8:1 */
+}
+
+/* Erfolgsmeldung nach dem Speichern eines Rezepts */
+.success-box {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background-color: #E6F0E9;
+    color: #22563A;              /* 7,4:1 */
+}
+
+.error-box p,
+.success-box p {
+    margin: 4px 0;
+}

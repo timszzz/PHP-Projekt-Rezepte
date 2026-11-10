@@ -9,7 +9,7 @@ require_once __DIR__ . '/../src/auth.php';
     <title><?= e($pageTitle ?? 'Rezepte') ?></title>
 
     <!-- Gemeinsames Stylesheet für alle Seiten -->
-    <!--<link rel="stylesheet" href="/php/PHP-Projekt-Rezepte/assets/style.css">-->
+    <link rel="stylesheet" href="/php/PHP-Projekt-Rezepte/assets/style.css">
 
     <!-- Optionales zusätzliches Stylesheet für einzelne Seiten -->
     <?php if (!empty($extraCss)): ?>

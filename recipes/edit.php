@@ -14,19 +14,23 @@ $recipeRepo = new RecipeRepository($db);
 $categoryRepo = new CategoryRepository($db);
 $userId = (int) $_SESSION['user_id'];
 
-// Rezept-ID aus der URL prüfen.
+// Rezept-ID aus der URL prüfen, bei ungültiger ID gibt es kein Rezept.
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-if (!$id || $id < 1) {
-    http_response_code(404);
-    exit('Rezept nicht gefunden.');
-}
-
-$recipe = $recipeRepo->findById($id);
+$recipe = ($id && $id > 0) ? $recipeRepo->findById($id) : null;
 
 // Nicht vorhandene Rezepte und Rezepte anderer Benutzer gleich behandeln.
+// Die Meldung erscheint im normalen Seitenlayout statt als reiner Text.
 if ($recipe === null || (int) $recipe['user_id'] !== $userId) {
     http_response_code(404);
-    exit('Rezept nicht gefunden oder keine Berechtigung.');
+    $pageTitle = 'Rezept nicht gefunden';
+    require __DIR__ . '/../templates/header.php';
+    ?>
+    <h1>Rezept bearbeiten</h1>
+    <p role="alert">Rezept nicht gefunden oder keine Berechtigung.</p>
+    <p><a href="<?= BASE_URL ?>/index.php">Zurück zu allen Rezepten</a></p>
+    <?php
+    require __DIR__ . '/../templates/footer.php';
+    exit;
 }
 
 $categories = $categoryRepo->findAll();
@@ -93,7 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = 'Rezept bearbeiten';
-$extraCss = '/php/PHP-Projekt-Rezepte/recipes/css/create.css';
 require __DIR__ . '/../templates/header.php';
 ?>
 <h1>Rezept bearbeiten</h1>

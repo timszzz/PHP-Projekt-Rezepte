@@ -75,4 +75,46 @@ class RecipeRepository
       'user_id' => $userId
    ]);
    }
+
+    // Ändert ein Rezept nur, wenn es dem angemeldeten Benutzer gehört
+    public function updateOwnedRecipes(
+        int $recipeId,
+        int $userId,
+        string $title,
+        string $ingredients,
+        string $preparation,
+        int $categoryId
+    ): bool {
+        $sql = 'UPDATE main_recipe
+                SET title = :title,
+                    ingredients = :ingredients,
+                    preparation = :preparation,
+                    category_id = :category_id
+                WHERE id = :id AND user_id = :user_id';
+
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([
+            'title' => $title,
+            'ingredients' => $ingredients,
+            'preparation' => $preparation,
+            'category_id' => $categoryId,
+            'id' => $recipeId,
+            'user_id' => $userId,
+        ]);
+    }
+
+    // Löscht ein Rezept nur, wenn es dem angemeldeten Benutzer gehört
+    public function deleteOwnedRecipes(int $recipeId, int $userId): bool
+    {
+        $sql = 'DELETE FROM main_recipe
+                WHERE id = :id AND user_id = :user_id';
+
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([
+            'id' => $recipeId,
+            'user_id' => $userId,
+        ]);
+    }
 }

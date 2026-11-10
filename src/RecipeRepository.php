@@ -23,7 +23,7 @@ class RecipeRepository
     // Liefert ein Rezept mit Kategorienamen oder null, wenn es nicht existiert
     public function findById(int $id): ?array
     {
-        $sql = 'SELECT r.id, r.title, r.ingredients, r.preparation, c.name AS category
+        $sql = 'SELECT r.id, r.title, r.ingredients, r.preparation, r.category_id, r.user_id, c.name AS category
                 FROM main_recipe r
                 JOIN main_category c ON r.category_id = c.id
                 WHERE r.id = :id';

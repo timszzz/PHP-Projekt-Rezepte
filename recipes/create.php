@@ -97,7 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $title,
             $ingredients,
             $preparation,
-            (int)$categoryId
+            (int)$categoryId,
+            (int)$_SESSION['user_id']
          );
 
          // Erfolgsmeldung für die nächste Anfrage speichern

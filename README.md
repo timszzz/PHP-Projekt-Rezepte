@@ -154,9 +154,15 @@ Das Post/Redirect/Get-Prinzip mit HTTP-Statuscode 303 verhindert eine erneute Sp
 
 ### Zugriffskontrolle (ERS-SEC)
 
-Die Zugriffskontrolle ist noch nicht implementiert, da sie vom Authentifizierungsmodul (Teilbereich 4) abhängt.
+Die Zugriffskontrolle wurde in die Rezept-Erstellung integriert.
 
-Nach der Integration sollen ausschließlich angemeldete Benutzer Rezepte erstellen können. Außerdem soll die Benutzer-ID dem erstellten Rezept zugeordnet werden.
+Die Funktion `requireLogin()` aus `src/auth.php` stellt sicher, dass ausschließlich angemeldete Benutzer neue Rezepte erstellen können. Nicht angemeldete Benutzer werden zur Login-Seite weitergeleitet.
+
+Zum Schutz vor Cross-Site Request Forgery (CSRF) enthält das Rezeptformular einen CSRF-Token. Dieser wird bei jeder POST-Anfrage serverseitig mit `checkCsrfToken()` überprüft. Anfragen ohne gültigen Token werden mit HTTP-Status 400 abgelehnt, ohne ein Rezept zu speichern.
+
+Beim Erstellen eines Rezepts wird die Benutzer-ID aus der PHP-Session (`$_SESSION['user_id']`) übernommen und zusammen mit den Rezeptdaten in der Tabelle `main_recipe` gespeichert.
+
+Die serverseitige Validierung der Pflichtfelder bleibt bestehen. Das Formular verwendet `novalidate`, damit die PHP-Validierung und die entsprechenden Fehlermeldungen getestet werden können.
 
 ### Tests (ERS-TST)
 
@@ -184,7 +190,7 @@ Die Testfälle und ihre Ergebnisse sind in `tests/TESTPLAN_ERS.md` dokumentiert.
 | `src/helpers.php` | Sichere HTML-Ausgabe über `e()` |
 | `templates/header.php` | Gemeinsamer Header |
 | `templates/footer.php` | Gemeinsamer Footer |
-| `tests/tests/TESTPLAN_ERS.md` | Dokumentation der Testfälle |
+| `tests/TESTPLAN_ERS.md` | Dokumentation der Testfälle |
 
 
 ## Suche und Rezeptanzeige (Tims Part (Teilbereich 2))

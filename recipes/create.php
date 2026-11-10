@@ -125,8 +125,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Seitentitel für das gemeinsame Layout festlegen
 $pageTitle = 'Rezept erstellen';
 
-// Eigenes Stylesheet für das Rezeptformular
-$extraCss = '/php/PHP-Projekt-Rezepte/recipes/css/create.css';
 
 // Gemeinsamen Header einbinden
 require_once __DIR__ . '/../templates/header.php';

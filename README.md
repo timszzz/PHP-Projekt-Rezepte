@@ -184,7 +184,7 @@ Die Testfälle und ihre Ergebnisse sind in `tests/TESTPLAN_ERS.md` dokumentiert.
 | Datei | Aufgabe |
 |---|---|
 | `recipes/create.php` | Formular, Validierung und Verarbeitung |
-| `recipes/css/create.css` | Gestaltung des Formulars |
+| `assets/style.css` | Gestaltung des Formulars (gemeinsames Stylesheet) |
 | `src/RecipeRepository.php` | Methode `create()` zum Speichern |
 | `src/CategoryRepository.php` | Laden der Kategorien |
 | `src/helpers.php` | Sichere HTML-Ausgabe über `e()` |

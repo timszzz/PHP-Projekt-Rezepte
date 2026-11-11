@@ -6,23 +6,19 @@
 
 - [x] Rezepte anzeigen (für alle Besucher, ohne Login)
 - [x] Rezepte suchen
-- [ ] Rezepte anlegen
-- [ ] Rezepte ändern
-- [ ] Rezepte löschen
-- [ ] Attribute je Rezept: Titel, Zutatenliste, Zubereitung, Kategorie
-- [ ] Login-Mechanismus, der Anlegen, Ändern und Löschen schützt
+- [x] Rezepte anlegen
+- [x] Rezepte ändern
+- [x] Rezepte löschen
+- [x] Attribute je Rezept: Titel, Zutatenliste, Zubereitung, Kategorie
+- [x] Login-Mechanismus, der Anlegen, Ändern und Löschen schützt
 
 ### Optionale Erweiterungen
 
 Welche davon wir umsetzen, ist noch offen.
 
-- [ ] Bewertungen und Kommentare durch Besucher
-- [ ] Fotos hochladen und anzeigen
-- [ ] Foto-Slider zum Durchblättern
-- [ ] Zusätzliche Attribute (Zeitaufwand, Schwierigkeitsgrad, Untertitel, Tags, Erstelldatum)
-- [ ] Fuzzy Search, also eine unscharfe Suche, die auch bei Tippfehlern Treffer liefert
-- [ ] Bemerkungen bzw. Notizen zu Rezepten
-- [ ] Benutzerverwaltung
+- [x] Kategorien-Filter
+- [x] Like-Funktion
+- [x] Benutzerverwaltung als Admin
 
 ## Voraussetzungen
 
@@ -96,24 +92,6 @@ Geplante Tabellen (TODO: nach dem Datenbankentwurf anpassen):
 | `main_recipe`   | Rezepte mit Titel, Zutatenliste, Zubereitung und Verweis auf die Kategorie |
 | `main_category` | Kategorien |
 | `main_user`     | Benutzer mit Login und Passwort-Hash |
-
-### Projektstruktur
-
-```
-TODO: Ordner und Dateien ergänzen, sobald die Struktur steht.
-Kurz dazuschreiben, was in welcher Datei liegt.
-```
-
-### Sicherheit
-
-Diese Maßnahmen aus der Vorlesung setzen wir um:
-
-- Passwörter werden mit `password_hash()` gespeichert und mit `password_verify()` geprüft, nie im Klartext.
-- Alle Datenbankabfragen mit Benutzereingaben laufen über Prepared Statements (Schutz vor SQL Injection).
-- Ausgaben von Benutzereingaben werden mit `htmlspecialchars()` kodiert (Schutz vor XSS).
-- Jede schreibende Aktion prüft serverseitig, ob der Benutzer angemeldet ist.
-- Nach dem Login wird die Session-ID mit `session_regenerate_id(true)` erneuert.
-- Formulare für Anlegen, Ändern und Löschen sind mit einem CSRF-Token abgesichert.
 
 ## Rezept-Erstellung (Xenias Part (Teilbereich 1))
 

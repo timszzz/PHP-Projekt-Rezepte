@@ -216,13 +216,13 @@ Rezepte ansehen und suchen geht ohne Login. Anlegen, Ändern und Löschen sind n
 
 - `auth/login.php` zeigt das Formular und prüft die Anmeldedaten. Nach dem Erfolg geht es zurück zur Startseite. Wer von einer geschützten Seite umgeleitet wurde, sieht den Hinweis „Bitte melde dich an“.
 - `auth/logout.php` beendet die Session und nimmt nur POST-Anfragen an.
-- `users/manage.php` ist die Benutzerverwaltung: Angemeldete Benutzer sehen alle Benutzer und können neue anlegen.
-- Die Navigation in `templates/header.php` zeigt je nach Status „Anmelden“ oder „Benutzer“, den Benutzernamen und „Abmelden“.
+- `users/manage.php` ist die Benutzerverwaltung: Nur der Admin (Benutzername `admin`) sieht alle Benutzer und kann neue anlegen. Andere angemeldete Benutzer bekommen den Statuscode 403.
+- Die Navigation in `templates/header.php` zeigt je nach Status „Anmelden“ oder den Benutzernamen und „Abmelden“. Den Menüpunkt „Benutzer“ sieht nur der Admin.
 
 | Datei | Aufgabe |
 |---|---|
 | `src/UserRepository.php` | `findByUsername()`, `findAll()`, `create()` |
-| `src/auth.php` | Session, Validierung, Passwortprüfung, `requireLogin()`, CSRF-Token |
+| `src/auth.php` | Session, Validierung, Passwortprüfung, `requireLogin()`, `isAdmin()`, `requireAdmin()`, CSRF-Token |
 
 Für neue Benutzer gilt: Benutzername 3 bis 50 Zeichen aus Buchstaben, Ziffern, `.`, `_` und `-`, Passwort 8 bis 72 Zeichen und zweimal gleich eingegeben. Doppelte Benutzernamen werden abgelehnt.
 

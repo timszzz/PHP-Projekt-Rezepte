@@ -1,12 +1,12 @@
 <?php
-// Benutzerverwaltung: zeigt alle Benutzer, angemeldete Benutzer können neue anlegen
+// Benutzerverwaltung: zeigt alle Benutzer, der Admin kann neue anlegen
 require_once __DIR__ . '/../src/Db.php';
 require_once __DIR__ . '/../src/helpers.php';
 require_once __DIR__ . '/../src/UserRepository.php';
 require_once __DIR__ . '/../src/auth.php';
 
-// Nur für angemeldete Benutzer, gilt auch für das Absenden des Formulars
-requireLogin();
+// Nur für den Admin, gilt auch für das Absenden des Formulars
+requireAdmin();
 
 $users = new UserRepository(new Db());
 $errors = [];

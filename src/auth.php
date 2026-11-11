@@ -168,3 +168,23 @@ function requireLogin(): void
         exit;
     }
 }
+
+// Admin ist der Benutzer mit dem Namen "admin"
+// Sicher, weil Benutzernamen eindeutig sind und niemand sich so umbenennen kann
+function isAdmin(): bool
+{
+    return currentUsername() === 'admin';
+}
+
+// Wie requireLogin(), aber nur der Admin darf weiter
+// Angemeldete Benutzer ohne Admin-Rechte bekommen 403, die Seite läuft nicht weiter
+function requireAdmin(): void
+{
+    requireLogin();
+
+    if (!isAdmin()) {
+        http_response_code(403);
+        echo 'Keine Berechtigung für diese Seite.';
+        exit;
+    }
+}

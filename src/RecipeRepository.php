@@ -23,7 +23,7 @@ class RecipeRepository
     // Liefert ein Rezept mit Kategorienamen oder null, wenn es nicht existiert
     public function findById(int $id): ?array
     {
-        $sql = 'SELECT r.id, r.title, r.ingredients, r.preparation, c.name AS category
+        $sql = 'SELECT r.id, r.title, r.ingredients, r.preparation, r.category_id, r.user_id, c.name AS category
                 FROM main_recipe r
                 JOIN main_category c ON r.category_id = c.id
                 WHERE r.id = :id';
@@ -57,12 +57,13 @@ class RecipeRepository
       string $ingredients,
       string $preparation,
       int $categoryId,
+      int $userId
    ): bool
    {
       $sql = 'INSERT INTO main_recipe
-      (title, ingredients, preparation, category_id)
+      (title, ingredients, preparation, category_id, user_id)
       VALUES
-      (:title, :ingredients, :preparation, :category_id)';
+      (:title, :ingredients, :preparation, :category_id, :user_id)';
 
    $stmt = $this->db->prepare($sql);
 
@@ -70,7 +71,50 @@ class RecipeRepository
       'title' => $title,
       'ingredients' => $ingredients,
       'preparation' => $preparation,
-      'category_id' => $categoryId
+      'category_id' => $categoryId,
+      'user_id' => $userId
    ]);
    }
+
+    // Ändert ein Rezept nur, wenn es dem angemeldeten Benutzer gehört
+    public function updateOwnedRecipes(
+        int $recipeId,
+        int $userId,
+        string $title,
+        string $ingredients,
+        string $preparation,
+        int $categoryId
+    ): bool {
+        $sql = 'UPDATE main_recipe
+                SET title = :title,
+                    ingredients = :ingredients,
+                    preparation = :preparation,
+                    category_id = :category_id
+                WHERE id = :id AND user_id = :user_id';
+
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([
+            'title' => $title,
+            'ingredients' => $ingredients,
+            'preparation' => $preparation,
+            'category_id' => $categoryId,
+            'id' => $recipeId,
+            'user_id' => $userId,
+        ]);
+    }
+
+    // Löscht ein Rezept nur, wenn es dem angemeldeten Benutzer gehört
+    public function deleteOwnedRecipes(int $recipeId, int $userId): bool
+    {
+        $sql = 'DELETE FROM main_recipe
+                WHERE id = :id AND user_id = :user_id';
+
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([
+            'id' => $recipeId,
+            'user_id' => $userId,
+        ]);
+    }
 }

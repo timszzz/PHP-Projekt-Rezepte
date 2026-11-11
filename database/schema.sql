@@ -6,6 +6,7 @@ CREATE DATABASE IF NOT EXISTS rezepte
 USE rezepte;
 
 -- Erst die Tabelle mit Fremdschlüsseln löschen, dann die referenzierten
+DROP TABLE IF EXISTS main_recipe_like;
 DROP TABLE IF EXISTS main_recipe;
 DROP TABLE IF EXISTS main_category;
 DROP TABLE IF EXISTS main_user;
@@ -34,3 +35,19 @@ CREATE TABLE main_recipe (
     FOREIGN KEY (category_id) REFERENCES main_category(id),
     FOREIGN KEY (user_id)     REFERENCES main_user(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Speichert Likes von angemeldeten Benutzern
+CREATE TABLE main_recipe_like (
+    recipe_id INT NOT NULL,
+    user_id INT NOT NULL,
+
+    PRIMARY KEY (recipe_id, user_id),
+
+    FOREIGN KEY (recipe_id)
+        REFERENCES main_recipe(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (user_id)
+        REFERENCES main_user(id)
+        ON DELETE CASCADE
+);

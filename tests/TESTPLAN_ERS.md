@@ -17,7 +17,9 @@ Es soll sichergestellt werden, dass nur gültige Rezepte gespeichert werden.
 | ERS-T05 | Zubereitung leer | Fehlermeldung: Bitte beschreiben Sie die Zubereitung. | Bestanden |
 | ERS-T06 | Ungültige Kategorie-ID | Fehlermeldung: Die ausgewählte Kategorie ist ungültig. | Bestanden |
 | ERS-T07 | Seite nach erfolgreichem Speichern aktualisieren | Kein doppelter Datenbankeintrag | Bestanden |
-| ERS-T08 | Rezept-Erstellung ohne Login aufrufen | Zugriff wird verweigert oder zur Anmeldung weitergeleitet | Ausstehend (AUTH) |
+| ERS-T08 | Rezept-Erstellung ohne Login aufrufen | Zugriff wird verweigert oder zur Anmeldung weitergeleitet | Bestanden |
+| ERS-T09 | POST ohne CSRF-Token | HTTP 400 und kein INSERT in main_recipe | Bestanden |
+
 
 ## Teststatus
 

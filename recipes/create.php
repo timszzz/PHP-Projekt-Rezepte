@@ -3,6 +3,10 @@ require_once __DIR__ . '/../src/Db.php';
 require_once __DIR__ . '/../src/helpers.php';
 require_once __DIR__ . '/../src/RecipeRepository.php';
 require_once __DIR__ . '/../src/CategoryRepository.php';
+require_once __DIR__ . '/../src/auth.php';
+
+// Nur angemeldete Benutzer dürfen Rezepte erstellen
+requireLogin();
 
 $db = new Db();
 
@@ -11,11 +15,6 @@ $recipeRepo = new RecipeRepository($db);
 
 // Repository für Kategorien
 $categoryRepo = new CategoryRepository($db);
-
-// Session für einmalige Erfolgsmeldungen starten
-if (session_status() === PHP_SESSION_NONE) {
-   session_start();
-}
 
 // Kategorien über das CategoryRepository laden
 $categories = $categoryRepo->findAll();
@@ -38,6 +37,12 @@ $categoryId = '';
 // Prüfen, ob das Formular abgeschickt wurde
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+   // CSRF-Token prüfen
+   if (!checkCsrfToken($_POST['csrf_token'] ?? null)) {
+      http_response_code(400);
+      $errors[] = 'Ungültiges CSRF-Token.';
+   }
 
    // Formulardaten aus dem POST-Request auslesen
    $titleInput = $_POST['title'] ?? '';
@@ -90,30 +95,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          $errors[] = 'Die ausgewählte Kategorie ist ungültig.';
       }
    }
+
    // Rezept nur speichern, wenn keine Validierungsfehler vorliegen
    if (empty($errors)) {
-         // Datenbankoperation über das RecipeRepository ausführen -> create()
-         $recipeRepo->create(
-            $title,
-            $ingredients,
-            $preparation,
-            (int)$categoryId
-         );
 
+      // Rezept mit der ID des angemeldeten Benutzers speichern
+      $saved = $recipeRepo->create(
+         $title,
+         $ingredients,
+         $preparation,
+         (int)$categoryId,
+         (int)$_SESSION['user_id']
+      );
+
+      if ($saved) {
          // Erfolgsmeldung für die nächste Anfrage speichern
          $_SESSION['recipe_success'] = 'Das Rezept wurde erfolgreich gespeichert.';
 
-         // Nach erfolgreichem INSERT zur GET-Seite weiterleiten (PRG)
+         // Nach erfolgreichem INSERT weiterleiten (PRG)
          header('Location: create.php', true, 303);
          exit;
+      }
+
+      // Fehlermeldung anzeigen, falls das Speichern fehlschlägt
+      $errors[] = 'Das Rezept konnte nicht gespeichert werden.';
    }
 }
 
 // Seitentitel für das gemeinsame Layout festlegen
 $pageTitle = 'Rezept erstellen';
 
-// Eigenes Stylesheet für das Rezeptformular
-$extraCss = '/php/PHP-Projekt-Rezepte/recipes/css/create.css';
 
 // Gemeinsamen Header einbinden
 require_once __DIR__ . '/../templates/header.php';
@@ -137,7 +148,14 @@ require_once __DIR__ . '/../templates/header.php';
    <?php endif; ?>
 
    <!-- Der Browser sendet den POST-Request an die aktuelle Seite (create.php). -->
-   <form method="POST">
+   <form method="POST" novalidate>
+
+   <!-- CSRF-Schutz für die Rezept-Erstellung -->
+   <input
+      type="hidden"
+      name="csrf_token"
+      value="<?= e(csrfToken()) ?>"
+   >
 
    <label for="title">Titel:</label>
 

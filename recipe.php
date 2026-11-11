@@ -4,6 +4,8 @@ require_once __DIR__ . '/src/Db.php';
 require_once __DIR__ . '/src/helpers.php';
 require_once __DIR__ . '/src/RecipeRepository.php';
 require_once __DIR__ . '/src/auth.php';
+require_once __DIR__ . '/src/LikeRepository.php';
+
 
 // ID aus der URL prüfen: Zahl bei gültigem Wert, sonst false oder null
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -18,6 +20,22 @@ if ($recipe === null) {
     http_response_code(404);
 }
 
+$likeCount = 0;
+$isLiked = false;
+
+if ($recipe !== null) {
+    $likeRepo = new LikeRepository(new Db());
+
+    $likeCount = $likeRepo->countByRecipe((int) $recipe['id']);
+
+    if (isLoggedIn()) {
+        $isLiked = $likeRepo->isLiked(
+            (int) $recipe['id'],
+            (int) $_SESSION['user_id']
+        );
+    }
+}
+
 $pageTitle = $recipe ? $recipe['title'] : 'Rezept nicht gefunden';
 require __DIR__ . '/templates/header.php';
 ?>
@@ -30,6 +48,40 @@ require __DIR__ . '/templates/header.php';
 
         <h2>Zubereitung</h2>
         <p><?= nl2br(e($recipe['preparation'])) ?></p>
+
+         <hr>
+
+         <h2>Gefällt mir</h2>
+
+         <p>❤️ <?= $likeCount ?> Likes</p>
+
+         <?php if (isLoggedIn()): ?>
+
+            <form method="post" action="<?= BASE_URL ?>/recipes/like.php">
+
+               <input type="hidden"
+                        name="recipe_id"
+                        value="<?= (int) $recipe['id'] ?>">
+
+               <input type="hidden"
+                        name="csrf_token"
+                        value="<?= e(csrfToken()) ?>">
+
+               <button type="submit">
+                     <?= $isLiked ? '❤️ Like entfernen' : '♡ Gefällt mir' ?>
+               </button>
+
+            </form>
+
+         <?php else: ?>
+
+            <p>
+               <a href="<?= BASE_URL ?>/login.php">Anmelden</a>,
+               um dieses Rezept zu liken.
+            </p>
+
+         <?php endif; ?>
+
 
         <?php if (isLoggedIn() && (int) $_SESSION['user_id'] === (int) $recipe['user_id']): ?>
             <hr>

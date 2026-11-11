@@ -66,7 +66,7 @@ require __DIR__ . '/templates/header.php';
         <ul>
             <?php foreach ($recipes as $recipe): ?>
                 <li>
-                    <a href="recipe.php?id=<?= e($recipe['id']) ?>"><?= e($recipe['title']) ?></a>
+                    <a href="<?= BASE_URL ?>/recipes/show.php?id=<?= e($recipe['id']) ?>"><?= e($recipe['title']) ?></a>
                     (<?= e($recipe['category']) ?>)
                 </li>
             <?php endforeach; ?>

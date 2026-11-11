@@ -1,10 +1,10 @@
 <?php
 // Detailseite: zeigt ein einzelnes Rezept
-require_once __DIR__ . '/src/Db.php';
-require_once __DIR__ . '/src/helpers.php';
-require_once __DIR__ . '/src/RecipeRepository.php';
-require_once __DIR__ . '/src/auth.php';
-require_once __DIR__ . '/src/LikeRepository.php';
+require_once __DIR__ . '/../src/Db.php';
+require_once __DIR__ . '/../src/helpers.php';
+require_once __DIR__ . '/../src/RecipeRepository.php';
+require_once __DIR__ . '/../src/auth.php';
+require_once __DIR__ . '/../src/LikeRepository.php';
 
 
 // ID aus der URL prüfen: Zahl bei gültigem Wert, sonst false oder null
@@ -37,7 +37,7 @@ if ($recipe !== null) {
 }
 
 $pageTitle = $recipe ? $recipe['title'] : 'Rezept nicht gefunden';
-require __DIR__ . '/templates/header.php';
+require __DIR__ . '/../templates/header.php';
 ?>
     <?php if ($recipe): ?>
         <h1><?= e($recipe['title']) ?></h1>
@@ -76,7 +76,7 @@ require __DIR__ . '/templates/header.php';
          <?php else: ?>
 
             <p>
-               <a href="<?= BASE_URL ?>/login.php">Anmelden</a>,
+               <a href="<?= BASE_URL ?>/auth/login.php">Anmelden</a>,
                um dieses Rezept zu liken.
             </p>
 
@@ -100,4 +100,4 @@ require __DIR__ . '/templates/header.php';
         <h1>Rezept nicht gefunden</h1>
         <p>Dieses Rezept gibt es nicht.</p>
     <?php endif; ?>
-<?php require __DIR__ . '/templates/footer.php'; ?>
+<?php require __DIR__ . '/../templates/footer.php'; ?>

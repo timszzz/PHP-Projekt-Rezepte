@@ -21,7 +21,9 @@ require_once __DIR__ . '/../src/auth.php';
         <a href="<?= BASE_URL ?>/index.php">Rezepte</a>
         <?php if (isLoggedIn()): ?>
             <a href="<?= BASE_URL ?>/recipes/create.php">Rezept erstellen</a>
-            <a href="<?= BASE_URL ?>/users/manage.php">Benutzer</a>
+            <?php if (isAdmin()): ?>
+                <a href="<?= BASE_URL ?>/users/manage.php">Benutzer</a>
+            <?php endif; ?>
             <span>Angemeldet als <?= e(currentUsername()) ?></span>
             <!-- Formular statt Link: Abmelden ändert etwas und läuft deshalb per POST -->
             <form method="post" action="<?= BASE_URL ?>/auth/logout.php" style="display:inline">

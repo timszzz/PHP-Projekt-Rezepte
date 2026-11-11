@@ -1,6 +1,6 @@
 <?php
 // Logout: nur per POST, damit ein fremder Link niemanden einfach abmelden kann
-require_once __DIR__ . '/src/auth.php';
+require_once __DIR__ . '/../src/auth.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -11,5 +11,5 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 logoutUser();
 
-header('Location: index.php', true, 303);
+header('Location: ' . BASE_URL . '/index.php', true, 303);
 exit;

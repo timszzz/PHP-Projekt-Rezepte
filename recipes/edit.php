@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 (int) $categoryId
             );
 
-            header('Location: ' . BASE_URL . '/recipe.php?id=' . $id, true, 303);
+            header('Location: ' . BASE_URL . '/recipes/show.php?id=' . $id, true, 303);
             exit;
         }
     }
@@ -138,6 +138,6 @@ require __DIR__ . '/../templates/header.php';
     </p>
 
     <button type="submit">Änderungen speichern</button>
-    <a href="<?= BASE_URL ?>/recipe.php?id=<?= (int) $id ?>">Abbrechen</a>
+    <a href="<?= BASE_URL ?>/recipes/show.php?id=<?= (int) $id ?>">Abbrechen</a>
 </form>
 <?php require __DIR__ . '/../templates/footer.php'; ?>

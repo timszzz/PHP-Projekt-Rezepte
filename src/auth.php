@@ -164,7 +164,7 @@ function requireLogin(): void
     if (!isLoggedIn()) {
         // Einmalige Meldung für die Login-Seite, sie wird dort nach dem Anzeigen gelöscht
         $_SESSION['login_notice'] = 'Bitte melde dich an, um diese Seite zu nutzen.';
-        header('Location: ' . BASE_URL . '/login.php', true, 303);
+        header('Location: ' . BASE_URL . '/auth/login.php', true, 303);
         exit;
     }
 }

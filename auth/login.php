@@ -1,13 +1,13 @@
 <?php
 // Login-Seite: GET zeigt das Formular, POST prüft die Anmeldedaten
-require_once __DIR__ . '/src/Db.php';
-require_once __DIR__ . '/src/helpers.php';
-require_once __DIR__ . '/src/UserRepository.php';
-require_once __DIR__ . '/src/auth.php';
+require_once __DIR__ . '/../src/Db.php';
+require_once __DIR__ . '/../src/helpers.php';
+require_once __DIR__ . '/../src/UserRepository.php';
+require_once __DIR__ . '/../src/auth.php';
 
 // Wer schon angemeldet ist, braucht das Formular nicht
 if (isLoggedIn()) {
-    header('Location: index.php', true, 303);
+    header('Location: ' . BASE_URL . '/index.php', true, 303);
     exit;
 }
 
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             loginUser($user);
 
             // Weiterleiten, damit ein Neuladen das Formular nicht erneut abschickt (PRG)
-            header('Location: index.php', true, 303);
+            header('Location: ' . BASE_URL . '/index.php', true, 303);
             exit;
         }
 
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = 'Anmelden';
-require __DIR__ . '/templates/header.php';
+require __DIR__ . '/../templates/header.php';
 ?>
     <h1>Anmelden</h1>
 
@@ -54,7 +54,7 @@ require __DIR__ . '/templates/header.php';
         <p role="alert"><?= e($error) ?></p>
     <?php endforeach; ?>
 
-    <form method="post" action="login.php">
+    <form method="post" action="<?= BASE_URL ?>/auth/login.php">
         <p>
             <label for="username">Benutzername</label><br>
             <input type="text" id="username" name="username" maxlength="50"
@@ -68,4 +68,4 @@ require __DIR__ . '/templates/header.php';
         </p>
         <button type="submit">Anmelden</button>
     </form>
-<?php require __DIR__ . '/templates/footer.php'; ?>
+<?php require __DIR__ . '/../templates/footer.php'; ?>

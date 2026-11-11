@@ -198,7 +198,7 @@ Die Testfälle und ihre Ergebnisse sind in `tests/TESTPLAN_ERS.md` dokumentiert.
 Rezepte können ohne Login angesehen und gesucht werden.
 
 - `index.php` zeigt alle Rezepte alphabetisch mit Kategorie. Über das Suchformular lässt sich ein Begriff in Titel und Zutaten suchen, Groß- und Kleinschreibung spielen dabei keine Rolle.
-- `recipe.php` zeigt Titel, Kategorie, Zutaten und Zubereitung eines Rezepts. Bei einer ungültigen oder unbekannten ID erscheint „Rezept nicht gefunden“ mit dem Statuscode 404.
+- `recipes/show.php` zeigt Titel, Kategorie, Zutaten und Zubereitung eines Rezepts. Bei einer ungültigen oder unbekannten ID erscheint „Rezept nicht gefunden“ mit dem Statuscode 404.
 
 | Datei | Aufgabe |
 |---|---|
@@ -214,9 +214,9 @@ Zum Testen im Browser aufrufen: `tests/test_helpers.php`, `tests/test_recipes.ph
 
 Rezepte ansehen und suchen geht ohne Login. Anlegen, Ändern und Löschen sind nur nach der Anmeldung erlaubt.
 
-- `login.php` zeigt das Formular und prüft die Anmeldedaten. Nach dem Erfolg geht es zurück zur Startseite. Wer von einer geschützten Seite umgeleitet wurde, sieht den Hinweis „Bitte melde dich an“.
-- `logout.php` beendet die Session und nimmt nur POST-Anfragen an.
-- `users.php` ist die Benutzerverwaltung: Angemeldete Benutzer sehen alle Benutzer und können neue anlegen.
+- `auth/login.php` zeigt das Formular und prüft die Anmeldedaten. Nach dem Erfolg geht es zurück zur Startseite. Wer von einer geschützten Seite umgeleitet wurde, sieht den Hinweis „Bitte melde dich an“.
+- `auth/logout.php` beendet die Session und nimmt nur POST-Anfragen an.
+- `users/manage.php` ist die Benutzerverwaltung: Angemeldete Benutzer sehen alle Benutzer und können neue anlegen.
 - Die Navigation in `templates/header.php` zeigt je nach Status „Anmelden“ oder „Benutzer“, den Benutzernamen und „Abmelden“.
 
 | Datei | Aufgabe |
@@ -242,7 +242,7 @@ requireLogin();
 - Nach dem Login wird die Session-ID mit `session_regenerate_id(true)` erneuert (Schutz vor Session Fixation).
 - Das Session-Cookie ist `HttpOnly` und `SameSite=Lax`, unter HTTPS zusätzlich `Secure`.
 - Die Session speichert nur Benutzer-ID und Namen, nie den Passwort-Hash.
-- Das Formular in `users.php` ist mit einem CSRF-Token abgesichert (`csrfToken()` und `checkCsrfToken()` in `src/auth.php`).
+- Das Formular in `users/manage.php` ist mit einem CSRF-Token abgesichert (`csrfToken()` und `checkCsrfToken()` in `src/auth.php`).
 
 Zum Testen im Browser aufrufen: `tests/test_auth.php` und `tests/test_protected.php`.
 

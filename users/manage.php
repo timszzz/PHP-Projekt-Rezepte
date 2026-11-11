@@ -1,9 +1,9 @@
 <?php
 // Benutzerverwaltung: zeigt alle Benutzer, angemeldete Benutzer können neue anlegen
-require_once __DIR__ . '/src/Db.php';
-require_once __DIR__ . '/src/helpers.php';
-require_once __DIR__ . '/src/UserRepository.php';
-require_once __DIR__ . '/src/auth.php';
+require_once __DIR__ . '/../src/Db.php';
+require_once __DIR__ . '/../src/helpers.php';
+require_once __DIR__ . '/../src/UserRepository.php';
+require_once __DIR__ . '/../src/auth.php';
 
 // Nur für angemeldete Benutzer, gilt auch für das Absenden des Formulars
 requireLogin();
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_success'] = 'Der Benutzer ' . $username . ' wurde angelegt.';
 
             // PRG: Neu laden schickt das Formular nicht noch einmal ab
-            header('Location: users.php', true, 303);
+            header('Location: ' . BASE_URL . '/users/manage.php', true, 303);
             exit;
         }
     }
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $allUsers = $users->findAll();
 
 $pageTitle = 'Benutzer';
-require __DIR__ . '/templates/header.php';
+require __DIR__ . '/../templates/header.php';
 ?>
     <h1>Benutzer</h1>
 
@@ -72,7 +72,7 @@ require __DIR__ . '/templates/header.php';
         <p role="alert"><?= e($error) ?></p>
     <?php endforeach; ?>
 
-    <form method="post" action="users.php">
+    <form method="post" action="<?= BASE_URL ?>/users/manage.php">
         <!-- Unsichtbares Feld mit dem CSRF-Token, wird beim Absenden geprüft -->
         <input type="hidden" name="csrf_token" value="<?= e(csrfToken()) ?>">
         <p>
@@ -92,4 +92,4 @@ require __DIR__ . '/templates/header.php';
         </p>
         <button type="submit">Benutzer anlegen</button>
     </form>
-<?php require __DIR__ . '/templates/footer.php'; ?>
+<?php require __DIR__ . '/../templates/footer.php'; ?>

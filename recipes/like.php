@@ -53,7 +53,7 @@ $likeRepo->toggle($recipeId, $userId);
 
 // Zurück zur Rezeptseite
 header(
-    'Location: ' . BASE_URL . '/recipe.php?id=' . $recipeId,
+    'Location: ' . BASE_URL . '/recipes/show.php?id=' . $recipeId,
     true,
     303
 );

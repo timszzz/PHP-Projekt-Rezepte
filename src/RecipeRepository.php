@@ -12,9 +12,10 @@ class RecipeRepository
     // Liefert alle Rezepte mit Kategorienamen, alphabetisch nach Titel
     public function findAll(): array
     {
-        $sql = 'SELECT r.id, r.title, c.name AS category
+        $sql = 'SELECT r.id, r.title, c.name AS category, u.username AS author
                 FROM main_recipe r
                 JOIN main_category c ON r.category_id = c.id
+                LEFT JOIN main_user u ON r.user_id = u.id
                 ORDER BY r.title';
 
         return $this->db->query($sql)->fetchAll();
@@ -23,9 +24,10 @@ class RecipeRepository
     // Liefert ein Rezept mit Kategorienamen oder null, wenn es nicht existiert
     public function findById(int $id): ?array
     {
-        $sql = 'SELECT r.id, r.title, r.ingredients, r.preparation, r.category_id, r.user_id, c.name AS category
+        $sql = 'SELECT r.id, r.title, r.ingredients, r.preparation, r.category_id, r.user_id, c.name AS category, u.username AS author
                 FROM main_recipe r
                 JOIN main_category c ON r.category_id = c.id
+                LEFT JOIN main_user u ON r.user_id = u.id
                 WHERE r.id = :id';
 
         $stmt = $this->db->prepare($sql);
@@ -37,9 +39,10 @@ class RecipeRepository
     // Sucht den Begriff in Titel und Zutaten
     public function search(string $term): array
     {
-        $sql = 'SELECT r.id, r.title, c.name AS category
+        $sql = 'SELECT r.id, r.title, c.name AS category, u.username AS author
                 FROM main_recipe r
                 JOIN main_category c ON r.category_id = c.id
+                LEFT JOIN main_user u ON r.user_id = u.id
                 WHERE r.title LIKE :title OR r.ingredients LIKE :ingredients
                 ORDER BY r.title';
 
@@ -121,9 +124,10 @@ class RecipeRepository
         // Liefert alle Rezepte einer bestimmten Kategorie
     public function findByCategory(int $categoryId): array
     {
-        $sql = 'SELECT r.id, r.title, c.name AS category
+        $sql = 'SELECT r.id, r.title, c.name AS category, u.username AS author
                 FROM main_recipe r
                 JOIN main_category c ON r.category_id = c.id
+                LEFT JOIN main_user u ON r.user_id = u.id
                 WHERE r.category_id = :category_id
                 ORDER BY r.title';
 

@@ -42,6 +42,7 @@ require __DIR__ . '/../templates/header.php';
     <?php if ($recipe): ?>
         <h1><?= e($recipe['title']) ?></h1>
         <p>Kategorie: <?= e($recipe['category']) ?></p>
+        <p>Erstellt von: <?= e($recipe['author'] ?? 'Unbekannt') ?></p>
 
         <h2>Zutaten</h2>
         <p><?= nl2br(e($recipe['ingredients'])) ?></p>

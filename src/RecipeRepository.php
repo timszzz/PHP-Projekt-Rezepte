@@ -117,4 +117,19 @@ class RecipeRepository
             'user_id' => $userId,
         ]);
     }
+
+        // Liefert alle Rezepte einer bestimmten Kategorie
+    public function findByCategory(int $categoryId): array
+    {
+        $sql = 'SELECT r.id, r.title, c.name AS category
+                FROM main_recipe r
+                JOIN main_category c ON r.category_id = c.id
+                WHERE r.category_id = :category_id
+                ORDER BY r.title';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['category_id' => $categoryId]);
+
+        return $stmt->fetchAll();
+    }
 }

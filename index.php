@@ -3,23 +3,58 @@
 require_once __DIR__ . '/src/Db.php';
 require_once __DIR__ . '/src/helpers.php';
 require_once __DIR__ . '/src/RecipeRepository.php';
+require_once __DIR__ . '/src/CategoryRepository.php';
 
 $repo = new RecipeRepository(new Db());
+$categoryRepo = new CategoryRepository(new Db());
 
 // Suchbegriff aus der URL lesen, fehlender oder ungültiger Wert wird zu ''
 $term = trim((string) filter_input(INPUT_GET, 'q'));
 
-// Ohne Suchbegriff alle Rezepte zeigen, sonst suchen
-if ($term === '') {
-    $recipes = $repo->findAll();
-} else {
+// Ausgewählte Kategorie aus der URL lesen
+$categoryId = filter_input(INPUT_GET, 'category', FILTER_VALIDATE_INT);
+
+if ($categoryId === false || $categoryId <= 0) {
+    $categoryId = null;
+}
+
+// Alle Kategorien laden
+$categories = $categoryRepo->findAll();
+
+// Kategorie gewählt: filtern, Suchbegriff: suchen, sonst alle Rezepte zeigen
+if ($categoryId !== null) {
+    $recipes = $repo->findByCategory($categoryId);
+} elseif ($term !== '') {
     $recipes = $repo->search($term);
+} else {
+    $recipes = $repo->findAll();
 }
 
 $pageTitle = 'Rezepte';
 require __DIR__ . '/templates/header.php';
 ?>
     <h1>Rezepte</h1>
+
+<form method="get" action="index.php">
+    <label for="category">Kategorie auswählen oder suchen</label>
+    <select name="category" id="category">
+
+        <option value="">Alle Kategorien</option>
+
+        <?php foreach ($categories as $category): ?>
+            <option
+                value="<?= e($category['id']) ?>"
+                <?= $categoryId === (int) $category['id'] ? 'selected' : '' ?>
+            >
+                <?= e($category['name']) ?>
+            </option>
+        <?php endforeach; ?>
+
+    </select>
+
+    <button type="submit">Filtern</button>
+
+    </form>
 
     <form method="get" action="index.php">
         <label for="q">Suche</label>
